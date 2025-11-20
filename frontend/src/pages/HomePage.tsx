@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import CarFeatureForm from '../components/CarFeatureForm';
 import PredictionResults from '../components/PredictionResults';
 import ModelMetricsDisplay from '../components/ModelMetricsDisplay';
+import ModelSelector from '../components/ModelSelector';
 import { CarSafetyAPI } from '../services/api';
 import { CarFeatures, PredictionResult, ModelMetrics, FeatureImportance, ModelComparison, LoadingState } from '../types';
 
@@ -59,6 +60,14 @@ const HomePage: React.FC = () => {
     }
   };
 
+  const handleModelChange = async (newModel: string) => {
+    setCurrentModel(newModel);
+    // Clear current prediction result when model changes
+    setPredictionResult(null);
+    // Reload metrics for the new model
+    await loadMetrics();
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -88,6 +97,10 @@ const HomePage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left Column - Input Form */}
           <div className="space-y-6">
+            <ModelSelector 
+              currentModel={currentModel}
+              onModelChange={handleModelChange}
+            />
             <CarFeatureForm 
               onSubmit={handlePrediction} 
               loading={loading.prediction}
